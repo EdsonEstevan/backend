@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: meu-backend
+    runtime: node
+    buildCommand: npm install
+    startCommand: node server.js
+    env:
+      - key: NODE_ENV
+        value: production
