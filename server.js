@@ -8,7 +8,8 @@ const port = 3000;
 
 // Configuração do CORS
 app.use(cors({
-  origin: 'http://sitexadrezifcedson.surge.sh', // URL do frontend
+  origin: 'https://sitexadrezifcedson.surge.sh',  // URL do frontend
+  
   methods: ['GET', 'POST', 'PUT', 'DELETE'], // Métodos permitidos
   allowedHeaders: ['Content-Type', 'Authorization'], // Headers permitidos
   credentials: true // Permite cookies/tokens (se necessário)
@@ -62,7 +63,7 @@ app.post('/login', (req, res) => {
 
 // Inicia o servidor HTTP
 const server = app.listen(port, () => {
-  console.log(`Servidor rodando em http://meu-backend-xtd4.onrender.com`);
+  console.log(`Servidor rodando em https://meu-backend-xtd4.onrender.com`);
 });
 
 // Configuração do WebSocket
