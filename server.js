@@ -35,13 +35,16 @@ db.serialize(() => {
 app.post('/register', (req, res) => {
   const { username, password } = req.body;
   const stmt = db.prepare('INSERT INTO users (username, password) VALUES (?, ?)');
-  stmt.run(username, password, (err) => {
+  stmt.run(username, password, function (err) {
     if (err) {
+      console.error('Erro ao cadastrar usuário:', err);
       res.status(400).json({ error: 'Usuário já existe' });
     } else {
+      console.log('Usuário cadastrado com sucesso:', username);
       res.status(201).json({ message: 'Cadastro realizado!' });
     }
   });
+  stmt.finalize();
 });
 
 // Rota para login
@@ -75,4 +78,8 @@ wss.on('connection', (ws) => {
   ws.on('close', () => {
     console.log('Cliente desconectado');
   });
+});
+process.on('SIGINT', () => {
+  db.close(); // Fecha o banco de dados ao encerrar o servidor
+  process.exit();
 });
