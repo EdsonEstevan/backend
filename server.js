@@ -23,12 +23,14 @@ const db = new sqlite3.Database('database.db');
 
 // Cria a tabela de usuários
 db.serialize(() => {
+  db.run("BEGIN TRANSACTION");
   db.run(`
     CREATE TABLE IF NOT EXISTS users (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       username TEXT UNIQUE,
       password TEXT
     )
+      
   `);
 });
 
@@ -36,6 +38,7 @@ db.serialize(() => {
 app.post('/register', (req, res) => {
   const { username, password } = req.body;
   const stmt = db.prepare('INSERT INTO users (username, password) VALUES (?, ?)');
+  
   stmt.run(username, password, function (err) {
     if (err) {
       console.error('Erro ao cadastrar usuário:', err);
@@ -45,10 +48,9 @@ app.post('/register', (req, res) => {
       res.status(201).json({ message: 'Cadastro realizado!' });
     }
   });
-  stmt.finalize();
-  db.run('COMMIT'); // Força a persistência dos dados
-});
 
+  stmt.finalize();
+});
 // Rota para login
 app.post('/login', (req, res) => {
   const { username, password } = req.body;
