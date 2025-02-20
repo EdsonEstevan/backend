@@ -1,15 +1,26 @@
 const express = require('express');
-const sqlite3 = require('sqlite3').verbose(); // Importação correta do sqlite3
-const WebSocket = require('ws');
+const sqlite3 = require('sqlite3').verbose();
 const cors = require('cors');
+const WebSocket = require('ws');
 
 const app = express();
 const port = 3000;
 
-// Configuração do SQLite
-const db = new sqlite3.Database('database.db'); // Criação do banco de dados
+// Configuração do CORS
+app.use(cors({
+  origin: 'https://sitexadrezifcedson.surge.sh', // URL do frontend
+  methods: ['GET', 'POST', 'PUT', 'DELETE'], // Métodos permitidos
+  allowedHeaders: ['Content-Type', 'Authorization'], // Headers permitidos
+  credentials: true // Permite cookies/tokens (se necessário)
+}));
 
-// Cria a tabela de usuários se não existir
+// Middleware para dados JSON
+app.use(express.json());
+
+// Configuração do banco de dados
+const db = new sqlite3.Database('database.db');
+
+// Cria a tabela de usuários
 db.serialize(() => {
   db.run(`
     CREATE TABLE IF NOT EXISTS users (
@@ -20,22 +31,17 @@ db.serialize(() => {
   `);
 });
 
-// Middleware para permitir CORS e JSON
-app.use(cors());
-app.use(express.json());
-
 // Rota para cadastro
 app.post('/register', (req, res) => {
   const { username, password } = req.body;
   const stmt = db.prepare('INSERT INTO users (username, password) VALUES (?, ?)');
-  stmt.run(username, password, function (err) {
+  stmt.run(username, password, (err) => {
     if (err) {
       res.status(400).json({ error: 'Usuário já existe' });
     } else {
-      res.status(201).json({ message: 'Cadastro realizado com sucesso!' });
+      res.status(201).json({ message: 'Cadastro realizado!' });
     }
   });
-  stmt.finalize();
 });
 
 // Rota para login
@@ -45,14 +51,14 @@ app.post('/login', (req, res) => {
     if (row) {
       res.status(200).json({ message: 'Login bem-sucedido!' });
     } else {
-      res.status(401).json({ error: 'Usuário ou senha incorretos' });
+      res.status(401).json({ error: 'Credenciais inválidas' });
     }
   });
 });
 
 // Inicia o servidor HTTP
 const server = app.listen(port, () => {
-  console.log(`Servidor rodando em http://localhost:${port}`);
+  console.log(`Servidor rodando em https://meu-backend-xtd4.onrender.com`);
 });
 
 // Configuração do WebSocket
