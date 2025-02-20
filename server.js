@@ -6,8 +6,6 @@ const path = require('path');
 const app = express();
 const http = require('http'); // Importe o módulo http
 const WebSocket = require('ws');
-
-const server = http.createServer(app); // Crie um servidor HTTP
 const wss = new WebSocket.Server({ server }); // Use o servidor HTTP para o WebSocket
 
 // Configuração do WebSocket
@@ -25,8 +23,7 @@ wss.on('connection', (ws) => {
 });
 
 // Inicia o servidor HTTP e WebSocket
-const port = 3000;
-server.listen(port, () => {
+const server = app.listen(port, () => {
   console.log(`Servidor rodando em https://meu-backend-xtd4.onrender.com`);
 });
 
