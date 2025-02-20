@@ -4,7 +4,31 @@ const fs = require('fs');
 const path = require('path');
 
 const app = express();
+const http = require('http'); // Importe o módulo http
+const WebSocket = require('ws');
+
+const server = http.createServer(app); // Crie um servidor HTTP
+const wss = new WebSocket.Server({ server }); // Use o servidor HTTP para o WebSocket
+
+// Configuração do WebSocket
+wss.on('connection', (ws) => {
+  console.log('Novo cliente conectado');
+
+  ws.on('message', (message) => {
+    console.log(`Mensagem recebida: ${message}`);
+    ws.send(`Você disse: ${message}`);
+  });
+
+  ws.on('close', () => {
+    console.log('Cliente desconectado');
+  });
+});
+
+// Inicia o servidor HTTP e WebSocket
 const port = 3000;
+server.listen(port, () => {
+  console.log(`Servidor rodando em https://meu-backend-xtd4.onrender.com`);
+});
 
 // Configuração do CORS
 app.use(cors({
@@ -67,4 +91,8 @@ app.post('/login', (req, res) => {
 // Inicia o servidor HTTP
 app.listen(port, () => {
   console.log(`Servidor rodando em https://meu-backend-xtd4.onrender.com`);
+});
+
+app.get('/mensagem', (req, res) => {
+  res.json({ message: 'Olá, frontend!' });
 });
